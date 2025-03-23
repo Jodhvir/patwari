@@ -21,34 +21,34 @@ land_add_subtract_page = st.Page(
 )
 
 
-convert_to_share_page = st.Page(
-    page='views/convert_to_share.py',
-    title='Convert to Share',
-)
+# convert_to_share_page = st.Page(
+#     page='views/convert_to_share.py',
+#     title='Convert to Share',
+# )
 
 
-create_tatima_page = st.Page(
-    page='views/create_tatima.py',
-    title='Create Tatima',
-)
+# create_tatima_page = st.Page(
+#     page='views/create_tatima.py',
+#     title='Create Tatima',
+# )
 
 
-land_conversion_page = st.Page(
-    page='views/land_conversion.py',
-    title='Land Conversion',
-)
+# land_conversion_page = st.Page(
+#     page='views/land_conversion.py',
+#     title='Land Conversion',
+# )
 
 
-share_owned_expert_page = st.Page(
-    page='views/share_owned_expert.py',
-    title='Share Owned Expert',
-)
+# share_owned_expert_page = st.Page(
+#     page='views/share_owned_expert.py',
+#     title='Share Owned Expert',
+# )
 
 
-find_area_page = st.Page(
-    page='views/find_area.py',
-    title='Find Area',
-)
+# find_area_page = st.Page(
+#     page='views/find_area.py',
+#     title='Find Area',
+# )
 
 
 
