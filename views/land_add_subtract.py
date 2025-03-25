@@ -5,13 +5,13 @@ st.title('Share Owned - Simple')
 options = ['Bigha/Biswa', 'Kanal/Marla']
 
 # Initialize session state for inputs
+if "rows" not in st.session_state:
+    st.session_state.rows = []
+
 if "value1" not in st.session_state:
     st.session_state.value1 = ''
     st.session_state.value2 = ''
     st.session_state.value3 = ''
-    st.session_state.value4 = ''
-    st.session_state.value5 = ''
-    st.session_state.value6 = ''
 
 # Select measurement type
 col7, col8, col9 = st.columns(3)
@@ -22,10 +22,7 @@ if st.session_state.measurement_type != st.session_state.get("previous_type", ""
     st.session_state.value1 = ''
     st.session_state.value2 = ''
     st.session_state.value3 = ''
-    st.session_state.value4 = ''
-    st.session_state.value5 = ''
-    st.session_state.value6 = ''
-    
+    st.session_state.rows = []
     st.session_state.previous_type = st.session_state.measurement_type
 
 # Define labels based on the selected type
@@ -41,35 +38,54 @@ value1 = col1.text_input(label1, st.session_state.value1, key="value1")
 value2 = col2.text_input(label2, st.session_state.value2, key="value2")
 value3 = col3.text_input(label3, st.session_state.value3, key="value3")
 
-# Add or subtract Land
-col10, col11, col12 = st.columns(3)
-add_or_subtract = col10.selectbox('Add or Subtract?', ['Add', 'Subtract'])
+# Add a new row button
+def add_row():
+    st.session_state.rows.append({"operation": "Add", "val1": '', "val2": '', "val3": ''})
 
-# Second row of inputs (for adding or subtracting area)
+def reset_values():
+    st.session_state.value1 = ''
+    st.session_state.value2 = ''
+    st.session_state.value3 = ''
+    st.session_state.rows = []
+    st.rerun()
+
+# Dynamic rows for add/subtract
 st.subheader('Enter Area to Add or Subtract')
-col4, col5, col6 = st.columns(3)
-value4 = col4.text_input(label1, st.session_state.value4, key="value4")
-value5 = col5.text_input(label2, st.session_state.value5, key="value5")
-value6 = col6.text_input(label3, st.session_state.value6, key="value6")
 
-# Add a submit button
-submitted = st.button('Submit')
+st.button("Add New Row", on_click=add_row)
+
+for idx, row in enumerate(st.session_state.rows):
+    col10, col11, col12, col13 = st.columns(4)
+    row["operation"] = col10.selectbox(f'Row {idx+1}: Add or Subtract?', ['Add', 'Subtract'], index=0, key=f"op_{idx}")
+    row["val1"] = col11.text_input(label1, row["val1"], key=f"val1_{idx}")
+    row["val2"] = col12.text_input(label2, row["val2"], key=f"val2_{idx}")
+    row["val3"] = col13.text_input(label3, row["val3"], key=f"val3_{idx}")
+
+# Submit and Reset buttons
+col_submit, col_reset = st.columns(2)
+submitted = col_submit.button('Submit')
+reset = col_reset.button('Reset', on_click=reset_values)
 
 if submitted:
     try:
-        # Convert text values to float for calculation
+        # Convert text values to float
         value1 = float(value1) if value1 else 0
         value2 = float(value2) if value2 else 0
         value3 = float(value3) if value3 else 0
-        value4 = float(value4) if value4 else 0
-        value5 = float(value5) if value5 else 0
-        value6 = float(value6) if value6 else 0
+        
+        total_big, total_bis, total_biswasi = value1, value2, value3
+        
+        for row in st.session_state.rows:
+            val1 = float(row["val1"]) if row["val1"] else 0
+            val2 = float(row["val2"]) if row["val2"] else 0
+            val3 = float(row["val3"]) if row["val3"] else 0
+            
+            big, bis, biswasi = common_funcs.land_add_subtract(
+                measurement_type, total_big, total_bis, total_biswasi, val1, val2, val3, row["operation"]
+            )
+            total_big, total_bis, total_biswasi = big, bis, biswasi
 
-        # Calculate the final values
-        FINAL_BIGHA, FINAL_BISWA, FINAL_BISWASI = common_funcs.land_add_subtract(
-            measurement_type, value1, value2, value3, value4, value5, value6, add_or_subtract
-        )
-        st.subheader(f'{FINAL_BIGHA}-{FINAL_BISWA}-{FINAL_BISWASI}')
-
+        st.subheader(f'{total_big}-{total_bis}-{total_biswasi}')
+    
     except ValueError:
         st.error('Please enter valid numbers.')
