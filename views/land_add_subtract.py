@@ -85,6 +85,7 @@ if submitted:
             )
             total_big, total_bis, total_biswasi = big, bis, biswasi
 
+        st.header('Total Area')
         st.subheader(f'{total_big}-{total_bis}-{total_biswasi}')
     
     except ValueError:
